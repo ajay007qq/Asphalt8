@@ -1,0 +1,19 @@
+log4j.rootLogger=DEBUG,Console,FILE
+#Console
+log4j.appender.Console=org.apache.log4j.ConsoleAppender
+log4j.appender.Console.layout=org.apache.log4j.PatternLayout
+log4j.appender.Console.layout.ConversionPattern=[%d] %-5p [%c.%M] - %m%n
+log4j.logger.java.sql.ResultSet=INFO
+log4j.logger.org.apache=INFO
+log4j.logger.java.sql.Connection=DEBUG
+log4j.logger.java.sql.Statement=DEBUG
+log4j.logger.java.sql.PreparedStatement=DEBUG
+
+log4j.appender.FILE=org.apache.log4j.RollingFileAppender
+log4j.appender.FILE.layout=org.apache.log4j.PatternLayout  
+log4j.appender.FILE.Append=true  
+log4j.appender.FILE.File=asphalt8.log
+log4j.appender.FILE.Threshold=debug
+log4j.appender.FILE.layout=org.apache.log4j.PatternLayout  
+log4j.appender.FILE.layout.ConversionPattern=[%d] %-5p [%c.%M] - %m%n
+log4j.appender.FILE.MaxFileSize=10MB

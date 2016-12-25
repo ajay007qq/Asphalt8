@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asphalt8.dao.CarDao">
+
+<select id="queryByCarId" resultType="Car" parameterType="int"> 
+	select car_id,
+	       car_name,
+	       car_category,
+	       vendor 
+	from car
+	where car_id=#{id}
+</select>
+
+<select id="queryByCarName" resultType="Car" parameterType="String">
+	select car_id,
+	       car_name,
+	       car_category,
+	       vendor,
+	       price
+	from car
+	where car_name=#{name}
+</select>
+
+<select id="queryByVendor" resultType="Car" parameterType="String">
+	select car_id,
+	       car_name,
+	       car_category,
+	       vendor,
+	       price
+	from car
+	where vendor=#{vendor}
+</select>
+
+<select id="queryCarsForAdvertisment" resultType="Car" parameterType="String">
+    select * 
+    from car 
+    where car_name != #{name}
+    and car_category = (select car_category from car where car_name=#{name})
+    order by rand() limit 0,4
+</select>
+
+<select id="queryCarByKeyWord" resultType="Car" parameterType="String">
+	select car_id,
+	       car_name,
+	       car_category,
+	       vendor,
+	       price 
+	from car
+	where instr(car_name,#{keyword})>0
+	or instr(vendor,#{keyword})>0
+	order by car_category;
+</select>
+
+<select id="queryAllCars" resultType="Car">
+   select car_id,
+          car_name,
+          car_category,
+          vendor
+   from car
+   order by car_category,car_name
+</select>
+
+<insert id="insertCar" parameterType="Car">
+	<!-- ignore: 忽略主键冲突报错 -->
+	insert ignore into car(car_name,car_category,vendor)
+	values (#{carName},#{carCategory},#{vendor})
+</insert>
+
+<insert id="save" parameterType="Car" useGeneratedKeys="true" keyProperty="carId">
+	<!-- use 'on duplicate key update' but 'ignore' -->
+	insert into car(car_name,car_category,vendor,price)
+	values (#{carName},#{carCategory},#{vendor},#{price})
+	on duplicate key
+	update
+	car_category=#{carCategory},
+	vendor=#{vendor},
+	price=#{price}
+</insert>
+
+<select id="queryVendorsByKeyWord" resultType="String" parameterType="String">
+	select distinct vendor 
+	from car
+	where instr(vendor,#{word})>0
+	order by vendor
+</select>
+
+<select id="queryCarNameByKeyWord" resultType="String" parameterType="String">
+	select distinct car_name 
+	from car
+	where instr(car_name,#{word})>0
+	order by car_name
+</select>
+
+</mapper>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asphalt8.dao.CarInfoDao">
+<select id="queryByCarName" resultType="CarInfo" parameterType="String">
+	select c.car_id 'car.car_id',
+		   c.car_name 'car.car_name',
+		   c.car_category 'car.car_category',
+		   c.vendor 'car.vendor',
+		   c.price 'car.price',
+		   
+		   f.car_id 'carFeature.car_id',
+		   c.car_name 'carFeature.car_name',
+		   f.base_upgrade_rank 'carFeature.base_upgrade_rank',
+		   f.max_upgrade_rank 'carFeature.max_upgrade_rank',
+		   f.base_pro_rank 'carFeature.base_pro_rank',
+		   f.max_pro_rank 'carFeature.max_pro_rank',
+		   f.base_acceleration 'carFeature.base_acceleration',
+		   f.max_acceleration 'carFeature.max_acceleration',
+		   f.base_speed 'carFeature.base_speed',
+		   f.max_speed 'carFeature.max_speed',
+		   f.base_handling 'carFeature.base_handling',
+		   f.max_handling 'carFeature.max_handling',
+		   f.base_nitro 'carFeature.base_nitro',
+		   f.max_nitro 'carFeature.max_nitro',
+		   
+		   i.car_id 'carIntroduction.car_id',
+		   c.car_name 'carIntroduction.car_name',
+		   i.description 'carIntroduction.description',
+		   i.appearances1 'carIntroduction.appearances1',
+		   i.appearances2 'carIntroduction.appearances2',
+		   i.appearances3 'carIntroduction.appearances3',
+		   i.design1 'carIntroduction.design1',
+		   i.design2 'carIntroduction.design2',
+		   i.design3 'carIntroduction.design3',
+		   
+		   s.car_id 'carStat.car_id',
+		   c.car_name 'carStat.car_name',
+		   s.race_count 'carStat.race_count',
+		   s.brought_count 'carStat.brought_count',
+		   s.like_count 'carStat.like_count',
+		   s.award_count 'carStat.award_count'
+		   
+	from car c
+	join car_feature f using(car_id)
+	join car_introduction i using(car_id)
+	join car_stat s using(car_id)
+	where c.car_name=#{name}
+</select>
+
+<select id="queryByCarId" resultType="CarInfo" parameterType="int">
+	select c.car_id 'car.car_id',
+		   c.car_name 'car.car_name',
+		   c.car_category 'car.car_category',
+		   c.vendor 'car.vendor',
+		   c.price 'car.price',
+		   
+		   f.car_id 'carFeature.car_id',
+		   c.car_name 'carFeature.car_name',
+		   f.base_upgrade_rank 'carFeature.base_upgrade_rank',
+		   f.max_upgrade_rank 'carFeature.max_upgrade_rank',
+		   f.base_pro_rank 'carFeature.base_pro_rank',
+		   f.max_pro_rank 'carFeature.max_pro_rank',
+		   f.base_acceleration 'carFeature.base_acceleration',
+		   f.max_acceleration 'carFeature.max_acceleration',
+		   f.base_speed 'carFeature.base_speed',
+		   f.max_speed 'carFeature.max_speed',
+		   f.base_handling 'carFeature.base_handling',
+		   f.max_handling 'carFeature.max_handling',
+		   f.base_nitro 'carFeature.base_nitro',
+		   f.max_nitro 'carFeature.max_nitro',
+		   
+		   i.car_id 'carIntroduction.car_id',
+		   c.car_name 'carIntroduction.car_name',
+		   i.description 'carIntroduction.description',
+		   i.appearances1 'carIntroduction.appearances1',
+		   i.appearances2 'carIntroduction.appearances2',
+		   i.appearances3 'carIntroduction.appearances3',
+		   i.design1 'carIntroduction.design1',
+		   i.design2 'carIntroduction.design2',
+		   i.design3 'carIntroduction.design3',
+		   
+		   s.car_id 'carStat.car_id',
+		   c.car_name 'carStat.car_name',
+		   s.race_count 'carStat.race_count',
+		   s.brought_count 'carStat.brought_count',
+		   s.like_count 'carStat.like_count',
+		   s.award_count 'carStat.award_count'
+		   
+	from car c
+	join car_feature f using(car_id)
+	join car_introduction i using(car_id)
+	join car_stat s using(car_id)
+	where c.car_id=#{id}
+</select>
+
+</mapper>

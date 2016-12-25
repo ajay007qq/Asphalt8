@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/util 
+	http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	
+<context:component-scan base-package="com.asphalt8" />
+
+<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">    
+    <property name="locations">    
+        <list>    
+            <value>classpath*:spring/jdbc.properties</value>
+            <value>classpath*:spring/redis.properties</value>
+        </list>    
+    </property>    
+</bean>    
+
+<!-- database connection pool -->
+<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+	<property name="driverClass" value="${driver}"/>
+	<property name="jdbcUrl" value="${url}"/>
+	<property name="user" value="${username}" />
+	<property name="password" value="${password}" />
+	<!-- pool -->
+	<property name="maxPoolSize" value="100" />
+	<property name="minPoolSize" value="10" />
+	<property name="autoCommitOnClose" value="false" />
+	<property name="checkoutTimeout" value="12000" />
+	<property name="acquireRetryAttempts" value="2" />
+</bean>
+
+<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<property name="dataSource" ref="dataSource" />
+	<property name="configLocation" value="classpath:mybatis-config.xml" />
+	<property name="typeAliasesPackage" value="com.asphalt8.entity" />
+	<property name="mapperLocations" value="classpath:mapper/*.xml" />
+</bean>
+
+<!-- config DAO implementation inject to spring IOC -->
+<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+	<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	<property name="basePackage" value="com.asphalt8.dao"/>
+</bean>
+
+<!-- SpringMVC上传文件时,需配置MultipartResolver处理器 -->
+<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!-- 注意maxUploadSize属性的限制所有文件的容量之和 -->
+    <property name="maxUploadSize" value="30000000"/>
+    <property name="defaultEncoding" value="UTF-8"/>
+</bean>
+
+<bean id="redis" class="com.asphalt8.entity.Redis">
+	<constructor-arg name="ip" value="${host}" />
+	<constructor-arg name="port" value="${port}" />
+</bean>
+
+<bean id="redisDao" class="com.asphalt8.dao.RedisDao">
+	<constructor-arg name="timeout" type="java.lang.Integer" value="${timeout}" />
+	<constructor-arg name="infoKey" value="${infoKey}" />
+	<constructor-arg name="featureKey" value="${featureKey}" />
+	<constructor-arg name="introKey" value="${introKey}" />
+	<constructor-arg name="mediaKey" value="${mediaKey}" />
+	<constructor-arg name="categoryKey" value="${categoryKey}" />
+	<constructor-arg name="statKey" value="${statKey}" />
+	<constructor-arg name="allCarKey" value="${allCarKey}" />
+	<constructor-arg name="topNitroSpeedKey" value="${topNitroSpeedKey}" />
+	<constructor-arg name="topNitroKey" value="${topNitroKey}" />
+	<constructor-arg name="topHandlingKey" value="${topHandlingKey}" />
+	<constructor-arg name="topSpeedKey" value="${topSpeedKey}" />
+	<constructor-arg name="topAccelerationKey" value="${topAccelerationKey}" />
+	<constructor-arg name="pong"  value="${pong}" />
+</bean>
+
+<bean id="carMediaServiceImpl"  class="com.asphalt8.service.CarMediaServiceImpl">
+	<property name="catetoryKey" value="${categoryKey}"/>
+	<property name="allCarKey" value="${allCarKey}"/>
+</bean>
+
+</beans>

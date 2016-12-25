@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asphalt8.dao.CarFeatureDao">
+	<select id="queryByCarId" resultType="CarFeature" parameterType="int">
+		select  f.car_id,
+				c.car_name,
+				f.base_upgrade_rank,
+				f.max_upgrade_rank,
+				f.base_pro_rank,
+				f.max_pro_rank,
+				f.base_acceleration,
+				f.max_acceleration,
+				f.base_speed,
+				f.max_speed,
+				f.base_handling,
+				f.max_handling,
+				f.base_nitro,
+				f.max_nitro
+		from car_feature f 
+		join car c using(car_id)
+		where f.car_id=c.car_id
+		and f.car_id=#{id}
+	</select>
+	
+	<select id="queryByCarName" resultType="CarFeature" parameterType="String">
+			select f.car_id,
+				c.car_name,
+				f.base_upgrade_rank,
+				f.max_upgrade_rank,
+				f.base_pro_rank,
+				f.max_pro_rank,
+				f.base_acceleration,
+				f.max_acceleration,
+				f.base_speed,
+				f.max_speed,
+				f.base_handling,
+				f.max_handling,
+				f.base_nitro,
+				f.max_nitro
+		from car_feature f 
+		join car c
+		using(car_id)
+		where c.car_name=#{name}
+	</select>
+	
+	<insert id="save" parameterType="CarFeature">
+		<!-- use 'on duplicate key update' but 'ignore' -->
+		insert into car_feature(car_id, 
+								base_upgrade_rank, max_upgrade_rank, 
+								base_pro_rank, max_pro_rank, 
+								base_acceleration, max_acceleration, 
+								base_speed, max_speed, 
+								base_handling, max_handling, 
+								base_nitro, max_nitro)
+		values(#{carId},
+				#{baseUpgradeRank},#{maxUpgradeRank},
+				#{baseProRank},#{maxProRank},
+				#{baseAcceleration},#{maxAcceleration},
+				#{baseSpeed},#{maxSpeed},
+				#{baseHandling},#{maxHandling},
+				#{baseNitro},#{maxNitro})
+	on duplicate key
+	update
+			base_upgrade_rank=#{baseUpgradeRank},
+			max_upgrade_rank=#{maxUpgradeRank},
+			base_pro_rank=#{baseProRank},
+			max_pro_rank=#{maxProRank},
+			base_acceleration=#{baseAcceleration},
+			max_acceleration=#{maxAcceleration},
+			base_speed=#{baseSpeed},
+			max_speed=#{maxSpeed},
+			base_handling=#{baseHandling},
+			max_handling=#{maxHandling},
+			base_nitro=#{baseNitro},
+			max_nitro=#{maxNitro}
+	</insert>
+
+	<insert id="insertCarFeature" parameterType="CarFeature">
+		<!-- ignore: 忽略主键冲突报错 -->
+		insert ignore into car_feature(car_id, 
+								base_upgrade_rank, max_upgrade_rank, 
+								base_pro_rank, max_pro_rank, 
+								base_acceleration, max_acceleration, 
+								base_speed, max_speed, 
+								base_handling, max_handling, 
+								base_nitro, max_nitro)
+		values(#{carId},
+				#{baseUpgradeRank},#{maxUpgradeRank},
+				#{baseProRank},#{maxProRank},
+				#{baseAcceleration},#{maxAcceleration},
+				#{baseSpeed},#{maxSpeed},
+				#{baseHandling},#{maxHandling},
+				#{baseNitro},#{maxNitro})
+	</insert>
+	
+	<select id="queryAllCars" resultType="CarFeature">
+				select f.car_id,
+				c.car_name,
+				f.base_upgrade_rank,
+				f.max_upgrade_rank,
+				f.base_pro_rank,
+				f.max_pro_rank,
+				f.base_acceleration,
+				f.max_acceleration,
+				f.base_speed,
+				f.max_speed,
+				f.base_handling,
+				f.max_handling,
+				f.base_nitro,
+				f.max_nitro
+		from car_feature f 
+		join car c
+		using(car_id)
+	</select>
+	
+</mapper>

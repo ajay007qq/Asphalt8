@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asphalt8.dao.CarIntroductionDao">
+
+	<select id="queryByCarId" resultType="CarIntroduction" parameterType="int">
+		select i.car_id,
+				c.car_name,
+				description,
+				appearances1,
+				appearances2,
+				appearances3,
+				design1,
+				design2,
+				design3
+		from car_introduction i
+		join car c using(car_id)
+		where i.car_id=#{id}
+		and c.car_id=i.car_id
+	</select>
+
+	<select id="queryByCarName" resultType="CarIntroduction" parameterType="String">
+		select i.car_id,
+				c.car_name,
+				description,
+				appearances1,
+				appearances2,
+				appearances3,
+				design1,
+				design2,
+				design3
+		from car_introduction i
+		join car c using(car_id)
+		where c.car_name=#{name}
+	</select>
+	
+	<select id="save" parameterType="CarIntroduction">
+	 <!-- use 'on duplicate key update' but 'ignore' -->
+	 insert into car_introduction(car_id,description,
+									appearances1,appearances2,appearances3,
+									design1,design2,design3)
+	 values(#{carId},#{description},
+				#{appearances1},#{appearances2},#{appearances3},
+				#{design1},#{design2},#{design3})
+	 on duplicate key
+	 update
+	 			description=#{description},
+	 			appearances1=#{appearances1},
+	 			appearances2=#{appearances2},
+	 			appearances3=#{appearances3},
+	 			design1=#{design1},
+	 			design2=#{design2},
+	 			design3=#{design3}
+	</select>
+
+	<insert id="insertCarIntroduction" parameterType="CarIntroduction">
+		<!-- ignore: 忽略主键冲突报错 -->
+		insert ignore into
+		car_introduction(car_id,description,
+							appearances1,appearances2,appearances3,
+							design1,design2,design3)
+		values(#{carId},#{description},
+				#{appearances1},#{appearances2},#{appearances3},
+				#{design1},#{design2},#{design3})
+	</insert>
+
+</mapper>

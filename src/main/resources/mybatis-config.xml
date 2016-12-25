@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<settings>
+		<!-- use jdbc getGenereatedKeys to get the auto increment key -->
+		<setting name="useGeneratedKeys" value="true"/>
+		
+		<!-- use column alias for column name -->
+		<setting name="useColumnLabel" value="true"/>
+		
+		<!-- enable the camel naming -->
+		<!-- create_time <=> createTime -->
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+		
+	</settings>
+</configuration>

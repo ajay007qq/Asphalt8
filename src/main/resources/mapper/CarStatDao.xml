@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.asphalt8.dao.CarStatDao">
+
+<select id="queryByCarId" resultType="CarStat" parameterType="int"> 
+	select s.car_id,
+		   c.car_name,
+		   race_count,
+		   brought_count,
+		   like_count,
+		   award_count
+	from car_stat s 
+	join car c using(car_id)
+	where c.car_id=#{id}
+	and s.car_id=c.car_id
+</select>
+
+<select id="queryByCarName" resultType="CarStat" parameterType="String">
+	select s.car_id,
+		   c.car_name,
+		   race_count,
+		   brought_count,
+		   like_count,
+		   award_count
+	from car_stat s
+	join car c using(car_id)
+	where c.car_name=#{name}
+	and s.car_id=c.car_id
+</select>
+
+<select id="save" parameterType="CarStat">
+	<!--  -->
+	insert into car_stat(car_id,race_count,brought_count,like_count,award_count)
+	values (#{carId},#{raceCount},#{broughtCount},#{likeCount},#{awardCount})
+	on duplicate key
+	update
+		  race_count=#{raceCount},
+		  brought_count=#{broughtCount},
+		  like_count=#{likeCount},
+		  award_count=#{awardCount}
+</select>
+
+<insert id="insertCarStat" parameterType="CarStat">
+	<!-- ignore: 忽略主键冲突报错 -->
+	insert ignore into car_stat
+	values (#{carId},#{raceCount},#{broughtCount},#{likeCount},#{awardCount})
+</insert>
+
+</mapper>
