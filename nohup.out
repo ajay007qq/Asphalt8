@@ -1,0 +1,12 @@
+warning: no common commits
+fatal: The remote end hung up unexpectedly
+fatal: protocol error: bad pack header
+warning: no common commits
+From github.com:ajay007qq/Asphalt8
+ * branch            master     -> FETCH_HEAD
+ * [new branch]      master     -> origin/master
+error: The following untracked working tree files would be overwritten by merge:
+	.classpath
+	.project
+Please move or remove them before you can merge.
+Aborting
