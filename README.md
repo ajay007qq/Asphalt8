@@ -12,12 +12,12 @@ Asphalt8 Project是想构建一个专注于Asphalt8的小型社区，内容包�
 1)赛车信息的录入和编辑 http://www.asphalt8.net/manage/editCar.html  <br>
 2)赛车图片和视频上传   http://www.asphalt8.net/manage/upload.html   <br>
 3)搜索赛车             http://www.asphalt8.net/search   <br>
-4)赛车性能比较         http://www.asphalt8.net/compare/Ferrari GTS/Tesla Model S <br>
+4)赛车性能比较         http://www.asphalt8.net/compare/Ferrari%20308%20GTS/Tesla%20Model%20S <br>
 
 
 ###3. 计划实现的功能：
 1)赛车性能top10排名  <br>
-2)赛道信息页面 <br>   
+2)赛道信息页面 <br>
 3)玩家社区(小型论坛) <br>
 4)录入所有赛车数据 <br>
 
@@ -41,6 +41,8 @@ Asphalt8 Project是想构建一个专注于Asphalt8的小型社区，内容包�
 11)Shell脚本    - Linux上实现自动化任务 <br>
 12)SVN          - 源码版本控制 <br>
 13)GitHub       - 项目托管 <br>
+14)JProflier    - JVM性能监控 <br>
+15)JMeter       - 高并发压力测试 <br>
 
 ###6.技术支持和维护
 ajay007@qq.com
