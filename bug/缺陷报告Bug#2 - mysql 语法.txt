@@ -1,0 +1,89 @@
+Asphalt8 缺陷报告
+============================================================================
+Bug#2 - SELECT list is not in GROUP BY clause and contains nonaggregated column 
+============================================================================
+
+############################################################################
+缺陷状态：   已经解决
+报告操作人： ajay007@qq.com
+关闭操作人： ajay007@qq.com
+############################################################################
+
+1. 环境描述
+1）生产环境：  主机 118.89.33.205, 域名 http://www.asphalt8.net
+2）操作系统：  Ubuntu Server 16.04.1 LTS 64位
+3）Mysql版本： mysql  Ver 14.14 Distrib 5.7.16, for Linux (x86_64)
+4) Tomcat版本：tomcat7
+5）JDK版本：   1.8
+6) 代码版本：  52
+
+2. 问题描述
+
+3. 异常信息
+1）页面报错
+ ### Error querying database. Cause: com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: 
+ Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 
+ 'asphalt8.car.car_id' which is not functionally dependent on columns in GROUP BY clause; this is 
+ incompatible with sql_mode=only_full_group_by ### The error may exist in file 
+ [/var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/mapper/CarDao.xml] ### The error may involve 
+ com.asphalt8.dao.CarDao.queryCarsForAdvertisment-Inline ### The error occurred while setting parameters
+ ### SQL: select * from car where car_name != ? and car_category = (select car_category from car where
+ car_name=?) group by vendor order by rand() limit 0,4 ### Cause: 
+ com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Expression #1 of SELECT list is not in GROUP
+ BY clause and contains nonaggregated column 'asphalt8.car.car_id' which is not functionally dependent 
+ on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by ; bad SQL grammar
+ []; nested exception is com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Expression #1 of 
+ SELECT list is not in GROUP BY clause and contains nonaggregated column 'asphalt8.car.car_id' which is
+ not functionally dependent on columns in GROUP BY clause; this is incompatible with 
+ sql_mode=only_full_group_by
+
+
+3）应用程序日志 - /home/ubuntu/tomcat7/asphalt8.log
+没有异常信息
+[2016-12-22 13:21:41,302] DEBUG [com.asphalt8.controller.SearchController.searchCar] - ????D???
+[2016-12-22 13:21:41,303] DEBUG [com.asphalt8.dao.RedisDao.queryMediaByCatetory] - Query media from redis by catetory: D
+[2016-12-22 13:21:41,303] DEBUG [com.asphalt8.dao.RedisDao.queryListByName] - Key => D:class:media
+[2016-12-22 13:21:41,303] DEBUG [com.asphalt8.dao.RedisDao.queryListByName] - length of values: 0
+[2016-12-22 13:21:41,303] DEBUG [com.asphalt8.service.CarMediaServiceImpl.queryCarsByCategory] - No media from redis: D
+[2016-12-22 13:21:41,303] DEBUG [com.asphalt8.service.CarMediaServiceImpl.queryCarsByCategory] - Query data from database...
+
+
+4) Tomcat日志 - /home/ubuntu/tomcat7/logs/catalina.out
+没有异常信息
+
+4）Mysql日志 - /var/log/mysql/error.log
+没有异常信息
+   
+4. 问题分析
+CarDao.xml有查询语句,由于select语句中没有显式查询vendor字段,所以违反了聚合语句group by vendor的语法规定。
+<select id="queryCarsForAdvertisment" resultType="Car" parameterType="String">
+    select * 
+    from car 
+    where car_name != #{name}
+    and car_category = (select car_category from car where car_name=#{name})
+    group by vendor
+    order by rand() limit 0,4
+</select>
+
+5. 原因分析
+在Mysql中配置sql_mode=only_full_group_by,导致聚合语句group by字段必须出现在select语句中
+
+6. 解决方案
+1） mysql的高级特性,SET sql_mode=only_full_group_by,mysql会对group by等聚合语句做语法检查，如果删除only_full_group_by，将不对聚合语句做语法检查
+
+或者
+
+2） 修改sql语句,删除group by语句
+
+<select id="queryCarsForAdvertisment" resultType="Car" parameterType="String">
+    select *
+    from car 
+    where car_name != #{name}
+    and car_category = (select car_category from car where car_name=#{name})
+    order by rand() limit 0,4
+</select>
+
+7. 总结
+采用方案2），修改sql语句queryCarsForAdvertisment,删除group by语句
+本地开发环境没有这个问题，因为sql_mode没有包括only_full_group_by
+本地开发环境Mysql中应当加入SET sql_mode=only_full_group_by

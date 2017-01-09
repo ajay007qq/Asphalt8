@@ -1,0 +1,80 @@
+Asphalt8 缺陷报告
+============================================================================
+Bug#1 - Error querying database. Cause: com.mysql.jdbc.PacketTooBigException
+============================================================================
+
+############################################################################
+缺陷状态：   已经解决
+报告操作人： ajay007@qq.com
+关闭操作人： ajay007@qq.com
+############################################################################
+
+1. 环境描述
+1）生产环境：  主机 118.89.33.205, 域名 http://www.asphalt8.net
+2）操作系统：  Ubuntu Server 16.04.1 LTS 64位
+3）Mysql版本： mysql  Ver 14.14 Distrib 5.7.16, for Linux (x86_64)
+4) Tomcat版本：tomcat7
+5）JDK版本：   1.8
+6) 代码版本：  52
+
+2. 问题描述
+1）点击首页推荐赛车链接时http://asphalt8.net/car/Audi%20TTS，跳转页面报错.
+2）赛车链接时不能搜索到任何赛车，页面无反应
+
+3. 异常信息
+1）页面报错
+### Error querying database. Cause: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (1642 > 1024). You can change this value on the server by setting the max_allowed_packet' variable. ### The error may exist in file [/var/lib/tomcat7/webapps/ROOT/WEB-INF/classes/mapper/CarInfoDao.xml] ### The error may involve com.asphalt8.dao.CarInfoDao.queryByCarName-Inline ### The error occurred while setting parameters ### SQL: select c.car_id 'car.car_id', c.car_name 'car.car_name', c.car_category 'car.car_category', c.vendor 'car.vendor', c.price 'car.price', f.car_id 'carFeature.car_id', c.car_name 'carFeature.car_name', f.base_upgrade_rank 'carFeature.base_upgrade_rank', f.max_upgrade_rank 'carFeature.max_upgrade_rank', f.base_pro_rank 'carFeature.base_pro_rank', f.max_pro_rank 'carFeature.max_pro_rank', f.base_acceleration 'carFeature.base_acceleration', f.max_acceleration 'carFeature.max_acceleration', f.base_speed 'carFeature.base_speed', f.max_speed 'carFeature.max_speed', f.base_handling 'carFeature.base_handling', f.max_handling 'carFeature.max_handling', f.base_nitro 'carFeature.base_nitro', f.max_nitro 'carFeature.max_nitro', i.car_id 'carIntroduction.car_id', c.car_name 'carIntroduction.car_name', i.description 'carIntroduction.description', i.appearances1 'carIntroduction.appearances1', i.appearances2 'carIntroduction.appearances2', i.appearances3 'carIntroduction.appearances3', i.design1 'carIntroduction.design1', i.design2 'carIntroduction.design2', i.design3 'carIntroduction.design3', s.car_id 'carStat.car_id', c.car_name 'carStat.car_name', s.race_count 'carStat.race_count', s.brought_count 'carStat.brought_count', s.like_count 'carStat.like_count', s.award_count 'carStat.award_count' from car c join car_feature f using(car_id) join car_introduction i using(car_id) join car_stat s using(car_id) where c.car_name=? ### Cause: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (1642 > 1024). You can change this value on the server by setting the max_allowed_packet' variable. ; SQL []; Packet for query is too large (1642 > 1024). You can change this value on the server by setting the max_allowed_packet' variable.; nested exception is com.mysql.jdbc.PacketTooBigException: Packet for query is too large (1642 > 1024). You can change this value on the server by setting the max_allowed_packet' variable.
+
+2）页面无错误信息
+
+3）应用程序日志 - /home/ubuntu/tomcat7/asphalt8.log
+asphalt8.log 日志正常，并没有捕获相应的错误信息。日志最后停留在‘Query car from database’便终止
+[2016-12-22 11:07:56,927] DEBUG [com.asphalt8.dao.RedisDao.queryCarInfoByName] - Query from redis: Audi TTS
+[2016-12-22 11:07:56,927] DEBUG [com.asphalt8.dao.RedisDao.queryRedisByName] - Key => Audi TTS:info
+[2016-12-22 11:07:56,928] DEBUG [com.asphalt8.dao.RedisDao.queryRedisByName] - No data from redis for key: audi tts:info
+[2016-12-22 11:07:56,928] DEBUG [com.asphalt8.service.CarInfoServiceImpl.queryByCarName] - No info from redis ...
+[2016-12-22 11:07:56,928] DEBUG [com.asphalt8.service.CarInfoServiceImpl.queryByCarName] - Query car from database ...
+
+4) Tomcat日志 - /home/ubuntu/tomcat7/logs/catalina.out
+
+[2016-12-22 11:07:56,928] DEBUG [com.asphalt8.service.CarInfoServiceImpl.queryByCarName] - Query car from database ...
+Dec 22, 2016 11:23:34 AM org.apache.coyote.http11.AbstractHttp11Processor process
+INFO: Error parsing HTTP request header
+ Note: further occurrences of HTTP header parsing errors will be logged at DEBUG level.
+java.lang.IllegalArgumentException: Invalid character (CR or LF) found in method name         at org.apache.coyote.http11.InternalInputBuffer.parseRequestLine(InternalInputBuffer.java:1 32)         at org.apache.coyote.http11.AbstractHttp11Processor.process(AbstractHttp11Processor.java:992)         at org.apache.coyote.AbstractProtocol$AbstractConnectionHandler.process(AbstractProtocol.java:625)         at org.apache.tomcat.util.net.JIoEndpoint$SocketProcessor.run(JIoEndpoint.java:316)         at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)         at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)         at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:61)         at java.lang.Thread.run(Thread.java:745) 
+
+4）Mysql日志 - /var/log/mysql/error.log
+无相应错误信息
+   
+4. 问题分析
+从页面报错看根本原因应该是Cause: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (1642 > 1024). You can change this value on the server by setting the max_allowed_packet' variable
+
+5. 原因分析 - 
+原因是MySQL的max_allowed_packet设置过小引起的，参考
+http://blog.csdn.net/fly0744/article/details/13623079
+http://stackoverflow.com/questions/11320236/com-mysql-jdbc-packettoobigexception
+
+6. 解决方案
+1）查看mysql目前max_allowed_packet配置值的大小show VARIABLES like '%max_allowed_packet%';
+
+mysql> show variables like 'max_allowed_packet';
++--------------------+-------+
+| Variable_name      | Value |
++--------------------+-------+
+| max_allowed_packet | 1024  |
++--------------------+-------+
+1 row in set (0.00 sec)
+
+2） max_allowed_packet=1024， 符合错误信息的提示Cause: com.mysql.jdbc.PacketTooBigException: Packet for query is too large (1642 > 1024)
+
+3）进入mysql server，在mysql命令行中运行，然后重启mysql,才能使更新的配置生效
+SET GLOBAL max_allowed_packet = 1024*1024*20;
+
+4）重启mysql
+sudo /etc/init.d/mysql restart
+
+5）重启后查看mysql新的max_allowed_packet配置值的大小
+show variables like 'max_allowed_packet';
+
+7. 总结
+生产环境的 Mysql 配置问题导致异常，本地开发环境无此问题
